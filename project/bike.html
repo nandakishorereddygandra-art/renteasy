@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bike Rentals - RentalCom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* === Loader styles === */
+    .loader-bg {
+      position: fixed;
+      inset: 0;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.4s;
+    }
+    .loader {
+      width: fit-content;
+      font-size: 40px;
+      line-height: 1.5;
+      font-family: system-ui, sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #0000;
+      -webkit-text-stroke: 1px #000;
+      background:
+        radial-gradient(1.13em at 50% 1.6em,#000 99%,#0000 101%) calc(50% - 1.6em) 0/3.2em 100% text,
+        radial-gradient(1.13em at 50% -0.8em,#0000 99%,#000 101%) 50% .8em/3.2em 100% repeat-x text;
+      animation: l9 2s linear infinite;
+    }
+    .loader:before {
+      content: "Loading";
+    }
+    @keyframes l9 {
+      to {background-position: calc(50% + 1.6em) 0,calc(50% + 3.2em) .8em}
+    }
+
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      color: #f5d07e;
+      background: radial-gradient(circle at center, #001011 0%, #000000 80%);
+      position: relative;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    *, *::before, *::after { box-sizing: inherit; }
+    body::before {
+      content: "";
+      position: fixed; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background:
+        radial-gradient(circle at 20% 30%, #00f0ff33, transparent 50%),
+        radial-gradient(circle at 80% 70%, #33ffff33, transparent 50%);
+      animation: glowShift 100s ease-in-out infinite alternate;
+      z-index: 0; pointer-events: none; filter: blur(80px);
+    }
+    @keyframes glowShift {
+      0% { background-position: 20% 30%, 80% 70%; }
+      100% { background-position: 25% 25%, 75% 75%; }
+    }
+    .form-container {
+      position: relative; 
+      width: 90%; 
+      max-width: 420px;
+      background: rgba(0,0,0,0.7); 
+      border-radius: 15px;
+      padding: 20px; 
+      margin: 40px auto;
+      box-shadow: 0 0 20px rgba(0,240,255,0.5);
+      backdrop-filter: blur(10px); 
+      border: 1px solid rgba(0,240,255,0.5);
+      z-index: 1; 
+      text-align: center;
+    }
+    .form-container img.bike-image {
+      width: 100px; 
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 8px #33ffffaa);
+      border-radius: 12px; 
+      background: #002222cc;
+      padding: 6px;
+    }
+    h1 {
+      font-size: 1.8rem; 
+      margin-bottom: 20px;
+      color: #00f0ff; 
+      font-weight: 700;
+    }
+    label {
+      display: block; 
+      margin-bottom: 6px;
+      font-weight: 600; 
+      color: #f5d07e; 
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    input, select {
+      display: block;
+      width: 100%;
+      padding: 10px 12px; 
+      margin-bottom: 15px;
+      border-radius: 10px; 
+      border: 1px solid #0ff;
+      background: #111; 
+      color: #f5d07e;
+      font-size: 1rem; 
+      font-family: inherit;
+    }
+    select option {
+      background: #111; 
+      color: #f5d07e;
+    }
+    input:focus, select:focus {
+      outline: none; 
+      border-color: #00f0ff;
+      background: #111;
+      box-shadow: 0 0 8px #00f0ff;
+    }
+    .file-input-container {
+      margin-bottom: 15px; 
+      text-align: left;
+    }
+    .file-input-label {
+      display: inline-block; 
+      padding: 10px 12px;
+      background: rgba(51,255,255,0.1);
+      border: 1px dashed #00f0ff; 
+      border-radius: 12px;
+      cursor: pointer; 
+      font-weight: 600; 
+      color: #00f0ff;
+    }
+    input[type="file"] { display: none; }
+    .file-count {
+      margin-left: 8px; 
+      font-weight: 500;
+      color: #00f0ff; 
+      font-size: 0.8rem;
+    }
+    button {
+      width: 100%; 
+      padding: 12px 0;
+      font-weight: 700; 
+      font-size: 1rem;
+      border: none; 
+      border-radius: 12px;
+      background: linear-gradient(45deg, #00f0ff, #0066ff);
+      color: #000; 
+      cursor: pointer;
+      box-shadow: 0 0 15px #00f0ff;
+      transition: transform 0.2s ease-in-out;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #00cfff, #0055cc);
+      transform: scale(1.04);
+    }
+    .back-button {
+      display: inline-block; 
+      margin: 15px auto 0;
+      color: #00f0ff; 
+      font-weight: 600;
+      text-decoration: none; 
+      border: 1px solid #00f0ff;
+      padding: 6px 12px; 
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+    .modal {
+      display: none; 
+      position: fixed; 
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); 
+      z-index: 999; 
+      padding: 20px;
+    }
+    .modal-content {
+      background: #111; 
+      border: 2px solid #00f0ff;
+      padding: 15px; 
+      border-radius: 12px;
+      width: 95%; 
+      max-width: 450px;
+      margin: 15% auto; 
+      box-shadow: 0 0 15px #00f0ff; 
+      color: #f5d07e;
+    }
+    .modal-content h2 {
+      margin-bottom: 10px; 
+      color: #00f0ff; 
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    .modal-content pre {
+      white-space: pre-wrap; 
+      font-size: 0.85rem;
+    }
+    .modal .close {
+      position: absolute; 
+      top: 10px; right: 15px;
+      font-size: 1.3rem; 
+      color: #00f0ff;
+      cursor: pointer;
+    }
+    #photoPreview {
+      margin-top: 15px; 
+      display: flex;
+      gap: 8px; 
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #photoPreview img {
+      width: 70px; 
+      height: 70px;
+      object-fit: cover; 
+      border-radius: 10px;
+      border: 2px solid #00f0ff;
+    }
+    @media (max-width: 420px) {
+      h1 { font-size: 1.5rem; }
+      .form-container { padding: 15px; margin: 20px auto; }
+      input, select { font-size: 0.9rem; padding: 8px; }
+      button { font-size: 0.9rem; padding: 10px 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loader Overlay -->
+  <div class="loader-bg" id="loader-bg">
+    <div class="loader"></div>
+  </div>
+
+  <div class="form-container">
+    <img class="bike-image" src="https://i.postimg.cc/L86bC5jR/Beige-Black-Simple-Modern-Car-Rental-Logo-2.png" alt="Bike Rentals Logo" />
+    <h1>Bike Rentals</h1>
+    <form id="bikeForm" novalidate>
+      <label>Owner Name</label>
+      <input type="text" name="ownerName" required />
+      <label>Phone Number</label>
+      <input type="tel" name="phoneNumber" pattern="^\\+?\\d{10,15}$" required />
+      <label>Bike Name/Model</label>
+      <input type="text" name="bikeModel" required />
+      <label>License Plate</label>
+      <input type="text" name="licensePlate" required />
+      <label>Rental Duration (Days)</label>
+      <input type="number" name="duration" min="1" required />
+      <label>Mileage (KM)</label>
+      <input type="number" name="mileage" min="0" step="5" required />
+      <label>Cost (₹)</label>
+      <input type="number" name="cost" min="0" step="100" required />
+      <label>Bike Condition</label>
+      <select name="bikeCondition" required>
+        <option value="" disabled selected>Select condition</option>
+        <option value="new">New</option>
+        <option value="like-new">Like New</option>
+        <option value="used">Used</option>
+        <option value="damaged">Damaged</option>
+      </select>
+      <div class="file-input-container">
+        <label class="file-input-label" for="bikePhotos">Choose Bike Photos</label>
+        <span class="file-count" id="fileCount">No files chosen</span>
+        <input type="file" id="bikePhotos" name="bikePhotos" accept="image/*" multiple />
+      </div>
+      <button type="submit">Submit</button>
+      <a href="index.html" class="back-button">← Back to Home</a>
+    </form>
+  </div>
+
+  <div id="resultModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Submission Summary</h2>
+      <pre id="modalText"></pre>
+      <div id="photoPreview"></div>
+    </div>
+  </div>
+
+  <script>
+    // Hide loader after load
+    window.addEventListener('load', function() {
+      document.getElementById('loader-bg').style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById('loader-bg').style.display = 'none';
+      }, 400);
+    });
+
+    const form = document.getElementById('bikeForm');
+    const modal = document.getElementById('resultModal');
+    const modalText = document.getElementById('modalText');
+    const photoPreview = document.getElementById('photoPreview');
+    const fileInput = document.getElementById('bikePhotos');
+    const fileCount = document.getElementById('fileCount');
+    const closeBtn = document.querySelector('.close');
+
+    fileInput.addEventListener('change', () => {
+      const count = fileInput.files.length;
+      fileCount.textContent = count === 0 ? 'No files chosen' : `${count} file${count>1?'s':''} selected`;
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const summary = `
+Owner: ${data.get('ownerName')}
+Phone: ${data.get('phoneNumber')}
+Bike Model: ${data.get('bikeModel')}
+License Plate: ${data.get('licensePlate')}
+Duration: ${data.get('duration')} day(s)
+Mileage: ${data.get('mileage')} km
+Cost: ₹${data.get('cost')}
+Condition: ${data.get('bikeCondition')}
+Photos: ${fileInput.files.length}
+`.trim();
+      modalText.textContent = summary;
+      photoPreview.innerHTML = '';
+      Array.from(fileInput.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = evt => {
+          const img = document.createElement('img');
+          img.src = evt.target.result;
+          photoPreview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+      modal.style.display = 'block';
+    });
+
+    // X button redirects to index.html
+    closeBtn.addEventListener('click', () => {
+      window.location.href = "index.html";
+    });
+
+    // Escape key also redirects
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "block") {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>

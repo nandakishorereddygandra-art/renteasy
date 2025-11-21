@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Rentals - RentalCom</title>
+  <style>
+  
+    .loader-bg {
+      position: fixed;
+      inset: 0;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.4s;
+    }
+    .loader {
+      width: fit-content;
+      font-size: 40px;
+      line-height: 1.5;
+      font-family: system-ui, sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #0000;
+      -webkit-text-stroke: 1px #000;
+      background:
+        radial-gradient(1.13em at 50% 1.6em,#000 99%,#0000 101%) calc(50% - 1.6em) 0/3.2em 100% text,
+        radial-gradient(1.13em at 50% -0.8em,#0000 99%,#000 101%) 50% .8em/3.2em 100% repeat-x text;
+      animation: l9 2s linear infinite;
+    }
+    .loader:before {
+      content: "Loading";
+    }
+    @keyframes l9 {
+      to {background-position: calc(50% + 1.6em) 0,calc(50% + 3.2em) .8em}
+    }
+
+    
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      color: #ffeb3b; 
+      background: radial-gradient(circle at center, #001011 0%, #000000 80%);
+      position: relative;
+      user-select: none;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%;
+      height: 200%;
+      background:
+        radial-gradient(circle at 20% 30%, #00f0ff33, transparent 50%),
+        radial-gradient(circle at 80% 70%, #33ffff33, transparent 50%);
+      animation: glowShift 100s ease-in-out infinite alternate;
+      z-index: 0;
+      pointer-events: none;
+      filter: blur(80px);
+    }
+    @keyframes glowShift {
+      0% { background-position: 20% 30%, 80% 70%; }
+      100% { background-position: 25% 25%, 75% 75%; }
+    }
+    .form-container {
+      position: relative;
+      max-width: 400px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 15px;
+      padding: 25px 30px;
+      margin: 50px auto 80px;
+      box-shadow: 0 0 20px rgba(0,240,255,0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,240,255,0.5);
+      z-index: 1;
+      text-align: center;
+    }
+    .form-container img.car-image {
+      width: 140px;
+      margin: 0 auto 20px;
+      user-select: none;
+      filter: drop-shadow(0 0 8px #33ffffaa);
+      border-radius: 12px;
+      background: #002222cc;
+      padding: 8px;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      color: #00f0ff; 
+      font-weight: 700;
+      user-select: none;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #ffeb3b; 
+      text-align: left;
+    }
+    input, select, textarea {
+      display: block;
+      width: 100%;
+      padding: 10px 15px;
+      margin-bottom: 18px;
+      border-radius: 10px;
+      border: 1px solid #0ff;
+      background: #111;
+      color: #ffeb3b;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s ease, background 0.3s ease;
+      resize: vertical;
+    }
+    select option {
+      background: #111;
+      color: #ffeb3b;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #00f0ff;
+      background: #111;
+      box-shadow: 0 0 8px #00f0ff;
+    }
+    .file-input-container {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .file-input-label {
+      display: inline-block;
+      padding: 12px 15px;
+      background: rgba(51, 255, 255, 0.1);
+      border: 1px dashed #00f0ff;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #00f0ff;
+      user-select: none;
+    }
+    .file-input-label:hover {
+      background: rgba(51, 255, 255, 0.2);
+      border-color: #00f0ff;
+    }
+    input[type="file"] { display: none; }
+    .file-count {
+      margin-left: 12px;
+      font-weight: 500;
+      color: #00f0ff;
+      font-size: 0.9rem;
+    }
+    button {
+      width: 100%;
+      padding: 14px 0;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #00f0ff, #0066ff);
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00f0ff;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #00cfff, #0055cc);
+      transform: scale(1.04);
+    }
+    .back-button {
+      display: inline-block;
+      margin: 18px auto 0;
+      color: #00f0ff;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid #00f0ff;
+      padding: 8px 14px;
+      border-radius: 12px;
+    }
+    .back-button:hover {
+      color: #00cfff;
+      border-color: #00cfff;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(5px);
+      z-index: 999;
+      padding: 40px 15px;
+    }
+    .modal-content {
+      background: #111;
+      border: 2px solid #00f0ff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      margin: 10% auto;
+      position: relative;
+      box-shadow: 0 0 15px #00f0ff;
+      color: #ffeb3b; 
+    }
+    .modal-content h2 {
+      margin-bottom: 15px;
+      color: #00f0ff;
+      text-align: center;
+    }
+    .modal-content pre {
+      white-space: pre-wrap;
+      margin-top: 10px;
+    }
+    .modal .close {
+      position: absolute;
+      top: 12px;
+      right: 20px;
+      font-size: 1.5rem;
+      color: #00f0ff;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .modal .close:hover {
+      color: #00cfff;
+    }
+    #photoPreview {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #photoPreview img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid #00f0ff;
+      box-shadow: 0 0 10px #00f0ff;
+      transition: transform 0.3s;
+    }
+    #photoPreview img:hover {
+      transform: scale(1.15);
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="loader-bg" id="loader-bg">
+    <div class="loader"></div>
+  </div>
+
+  <div class="form-container">
+    <img class="car-image" src="https://i.postimg.cc/BZB3R99Z/Yellow-Modern-Car-Rental-Instagram-Post-2.png" alt="Car Rentals Logo" />
+    <h1>Car Rentals</h1>
+    <form id="carForm" novalidate>
+      <label>Owner Name</label>
+      <input type="text" name="ownerName" required />
+
+      <label>Phone Number</label>
+      <input type="tel" name="phoneNumber" pattern="^\+?\d{10,15}$" required />
+
+      <label>Address</label>
+      <input type="text" name="address" required />
+
+      <label>Car Name</label>
+      <input type="text" name="carName" required />
+
+      <label>Car Model (Year)</label>
+      <input type="text" name="carModel" required />
+
+      <label>Rental Duration (Days)</label>
+      <input type="number" name="duration" min="1" required />
+
+      <label>Mileage (KM)</label>
+      <input type="number" name="mileage" min="0" step="5" required />
+
+      <label>Cost (₹)</label>
+      <input type="number" name="cost" min="0" step="100" required />
+
+      <label>Car Condition</label>
+      <select name="carCondition" required>
+        <option value="" disabled selected>Select condition</option>
+        <option value="new">New</option>
+        <option value="like-new">Like New</option>
+        <option value="used">Used</option>
+        <option value="damaged">Damaged</option>
+      </select>
+
+      <div class="file-input-container">
+        <label class="file-input-label" for="carPhotos">Choose Car Photos</label>
+        <span class="file-count" id="fileCount">No files chosen</span>
+        <input type="file" id="carPhotos" name="carPhotos" accept="image/*" multiple />
+      </div>
+
+      <button type="submit">Submit</button>
+      <a href="index.html" class="back-button">← Back to Home</a>
+    </form>
+  </div>
+
+  <div id="resultModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <h2 id="modalTitle">Submission Summary</h2>
+      <span class="close" role="button" tabindex="0" aria-label="Close">&times;</span>
+      <pre id="modalText"></pre>
+      <div id="photoPreview"></div>
+    </div>
+  </div>
+
+  <script>
+  
+    window.addEventListener('load', function() {
+      document.getElementById('loader-bg').style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById('loader-bg').style.display = 'none';
+      }, 400);
+    });
+
+    
+    const form = document.getElementById("carForm");
+    const modal = document.getElementById("resultModal");
+    const modalText = document.getElementById("modalText");
+    const photoPreview = document.getElementById("photoPreview");
+    const closeBtn = document.querySelector(".close");
+    const fileInput = document.getElementById("carPhotos");
+    const fileCountSpan = document.getElementById("fileCount");
+
+    fileInput.addEventListener("change", () => {
+      const count = fileInput.files.length;
+      fileCountSpan.textContent = count === 0 ? "No files chosen" : `${count} file${count > 1 ? 's' : ''} selected`;
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const summary = `
+Owner: ${formData.get('ownerName')}
+Phone: ${formData.get('phoneNumber')}
+Address: ${formData.get('address')}
+Car Name: ${formData.get('carName')}
+Car Model: ${formData.get('carModel')}
+Rental Duration: ${formData.get('duration')} day(s)
+Mileage: ${formData.get('mileage')} km
+Cost: ₹${formData.get('cost')}
+Condition: ${formData.get('carCondition')}
+      `.trim();
+
+      modalText.textContent = summary;
+      photoPreview.innerHTML = "";
+
+      const photos = fileInput.files;
+      if (photos.length > 0) {
+        [...photos].forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            photoPreview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      modal.style.display = "block";
+      closeBtn.focus();
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+      window.location.href = "index.html";
+    });
+
+    window.onclick = function (event) {
+      if (event.target === modal) {
+        modal.style.display ="none";
+        window.location.href = "index.html";
+      }
+    };
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "block") {
+        modal.style.display = "none";
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>

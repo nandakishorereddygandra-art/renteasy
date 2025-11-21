@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RentEasy</title>
+<style>
+:root {
+  --primary-color: #00f0ff;
+  --primary-color-dark: #00c0d0;
+  --background-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  --card-bg: rgba(255, 255, 255, 0.07);
+  --card-shadow: rgba(0, 255, 255, 0.2);
+  --text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-color), 0 0 15px var(--primary-color);
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  font-family: var(--font-family);
+  color: #fff;
+  background: var(--background-gradient);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+  overflow-x: hidden;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#particleCanvas {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 0;
+}
+
+header {
+  background: rgba(0, 0, 0, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  text-align: center;
+  padding: 3rem 1rem 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+.split-text-container {
+  display: flex;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--primary-color);
+  text-shadow: var(--text-shadow);
+  user-select: none;
+  flex-wrap: nowrap;
+}
+
+.text-part { animation-duration: 1.8s; animation-fill-mode: forwards; }
+.text-part.left { transform: translateX(-200%); animation-name: slide-in-left; }
+.text-part.right { transform: translateX(200%); animation-name: slide-in-right; }
+@keyframes slide-in-left { to { transform: translateX(0); } }
+@keyframes slide-in-right { to { transform: translateX(0); } }
+
+.no-glow { text-shadow: none !important; color: var(--primary-color); font-weight: 900; }
+.split-text-container.small { font-size: 1.5rem; margin-top: 0.5rem; font-weight: 600; }
+.about-us { margin-top: 0.75rem; font-size: 1rem; color: #bbb; max-width: 600px; margin: auto; font-weight: 500; }
+
+.header-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-wrapper {
+  position: relative; display: flex; align-items: center;
+}
+.search-bar {
+  width: 200px; padding: 10px 35px 10px 12px;
+  border: none; border-radius: 8px;
+  font-size: 1rem; background: rgba(255,255,255,0.12);
+  color: #e0e0e0; font-weight: 600;
+  box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.25);
+}
+.search-bar::placeholder { color: #aaa; }
+.search-icon { position: absolute; right: 10px; cursor: pointer; color: var(--primary-color); font-size: 1.2rem; }
+
+.login-button { padding: 12px 24px; border-radius: 8px; background: var(--primary-color); color: #000; font-weight: 700; text-decoration: none; box-shadow: 0 0 10px var(--primary-color); transition: 0.3s ease; }
+.login-button:hover { background: var(--primary-color-dark); transform: scale(1.06); }
+
+.hamburger {
+  display: none; flex-direction: column; justify-content: space-between;
+  width: 28px; height: 22px; cursor: pointer; z-index: 20;
+}
+.hamburger span { display: block; height: 3px; background: var(--primary-color); border-radius: 2px; }
+
+.mobile-menu {
+  display: none; flex-direction: column; gap: 1rem;
+  position: absolute; top: 100%; right: 0;
+  width: 240px; background: rgba(0,0,0,0.9);
+  padding: 1rem; text-align: left;
+}
+.mobile-menu a { color: #fff; font-weight: 600; text-decoration: none; }
+.mobile-menu.show { display: flex; }
+
+#container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin: 3rem auto;
+  padding: 0 1rem 4rem;
+  max-width: 1200px;
+  justify-items: center;
+}
+
+.card-wrapper { text-align: center; width: 100%; max-width: 250px; }
+.category-card {
+  width: 100%; height: 180px; border-radius: 15px; overflow: hidden;
+  background: var(--card-bg); backdrop-filter: blur(16px);
+  box-shadow: 0 0 20px var(--card-shadow); display: flex;
+  align-items: center; justify-content: center; transition: 0.3s;
+}
+.category-card:hover { transform: scale(1.06); box-shadow: 0 0 40px var(--primary-color); }
+
+.category-card img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+.category-text { margin-top: 12px; font-size: 1.3rem; color: #111; text-shadow: var(--text-shadow); font-weight: 700; }
+
+footer { text-align: center; color: #aaa; background: rgba(0,0,0,0.45); padding: 1rem; }
+
+/* Responsive grids and header */
+@media (max-width: 1024px) { #container { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 768px) {
+  #container { grid-template-columns: repeat(3, 1fr); }
+
+  /* hide desktop header buttons */
+  .header-actions .login-button, .header-actions .search-wrapper { display: none; }
+
+  .hamburger { display: flex; }
+
+  /* Mobile header row */
+  #mobileHeaderRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0 10px;
+  }
+  #mobileHeaderRow .search-wrapper {
+    flex: 1; /* expand search bar */
+    max-width: 150px;
+  }
+}
+@media (max-width: 480px) { #container { grid-template-columns: repeat(2, 1fr); } }
+
+</style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+
+<header>
+  <div class="split-text-container">
+    <div class="text-part left">Rent</div>
+    <div class="text-part right">Easy</div>
+  </div>
+  <div class="text-part left no-glow" style="font-size: 1.5rem; margin-top: 0.5rem;">Unleash The Joy Of Rentals</div>
+  <div>We provide a wide range of rental services to meet your needs.</div>
+
+  <div class="header-actions">
+    <!-- Desktop buttons -->
+    <a href="profile.html" class="login-button">Profile 👤</a>
+    <a href="browser.html" class="login-button">Browse Rentals</a>
+    <div class="search-wrapper">
+      <input id="searchInput" class="search-bar" placeholder="Search rentals..." oninput="filterCategories()">
+      <span class="search-icon">🔍</span>
+    </div>
+    <a href="yourrentals.html" class="login-button">Your Rentals</a>
+    <a href="about.html" class="login-button">About Us</a>
+
+    <!-- Mobile row: Hamburger + Browse + Search + Your Rentals -->
+    <div id="mobileHeaderRow">
+      <div class="hamburger" id="hamburgerBtn">
+        <span></span><span></span><span></span>
+      </div>
+      <a href="browser.html" class="login-button" style="font-size:0.9rem; padding:6px 8px;">Browse</a>
+      <div class="search-wrapper" style="flex:1;">
+        <input id="mobileSearchInput" class="search-bar" placeholder="Search..." oninput="filterCategories()" style="width:100%; font-size:0.85rem; padding:5px 8px;">
+        <span class="search-icon">🔍</span>
+      </div>
+      <a href="yourrentals.html" class="login-button" style="font-size:0.9rem; padding:6px 8px;">Your Rentals</a>
+    </div>
+
+    <!-- Mobile menu dropdown -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="profile.html">Profile 👤</a>
+      <a href="about.html">About Us</a>
+    </div>
+  </div>
+</header>
+
+<main id="container">
+  <!-- Cards here (same as before) -->
+  <div class="card-wrapper" data-category="Car Rentals">
+    <a href="car.html" class="category-card"><img src="https://i.postimg.cc/BZB3R99Z/Yellow-Modern-Car-Rental-Instagram-Post-2.png" alt="Car Rentals" /></a>
+    <div class="category-text">Car Rentals</div>
+  </div>
+  <div class="card-wrapper" data-category="Bike Rentals">
+    <a href="bike.html" class="category-card"><img src="https://i.postimg.cc/L86bC5jR/Beige-Black-Simple-Modern-Car-Rental-Logo-2.png" alt="Bike Rentals" /></a>
+    <div class="category-text">Bike Rentals</div>
+  </div>
+  <div class="card-wrapper" data-category="House Rentals">
+    <a href="house.html" class="category-card"><img src="https://i.postimg.cc/9XDXSXtd/Grey-and-Black-Car-Rental-Service-Logo.png" alt="House Rentals" /></a>
+    <div class="category-text">House Rentals</div>
+  </div>
+  <div class="card-wrapper" data-category="Plot Rentals">
+    <a href="plot.html" class="category-card"><img src="https://i.postimg.cc/NFXKwQTj/Blue-and-White-Modern-Land-Plot-Sale-Promotion-Instagram-Post.png" alt="Plot Rentals" /></a>
+    <div class="category-text">Plot Rentals</div>
+  </div>
+  <div class="card-wrapper" data-category="Home Appliances Rentals">
+    <a href="homeappliances.html" class="category-card"><img src="https://i.postimg.cc/qMJJRn8n/Blue-and-White-Modern-Air-Conditioner-Service-Promotion-Instagram-Post-2.png" alt="Home Appliances Rentals" /></a>
+    <div class="category-text">Home Appliances Rentals</div>
+  </div>
+  <div class="card-wrapper" data-category="Camera Rentals">
+    <a href="camera.html" class="category-card"><img src="https://i.postimg.cc/MKQDnMq6/Black-White-Illustrative-Modern-Camera-Studio-Icon-Logo-1.png" alt="Camera Rentals" /></a>
+    <div class="category-text">Camera Rentals</div>
+  </div>
+  <div class="card-wrapper" data-category="Musical Rentals">
+    <a href="musical.html" class="category-card"><img src="https://i.postimg.cc/9Q4zZQBK/Brown-Beige-Black-Simple-Violin-Instrument-Photo-Music-Book-Cover-1.png" alt="Musical Rentals" /></a>
+    <div class="category-text">Musical Rentals</div>
+  </div>
+  <div class="card-wrapper" data-category="Other Rentals">
+    <a href="other.html" class="category-card"><img src="https://i.postimg.cc/L8dhkM0s/White-and-Blue-Apartment-For-Rent-Facebook-Post.png" alt="Other Rentals" /></a>
+    <div class="category-text">Other Rentals</div>
+  </div>
+</main>
+
+<footer>
+<p>© 2025 RentEasy. All rights reserved.<br>
+RentEasy is an online platform facilitating rental transactions where users can offer or rent properties and items. All content, design, and intellectual property on this site are owned by RentEasy. No part of this website may be copied, reproduced, distributed, or transmitted in any form without prior written permission.</p>
+</footer>
+
+<script>
+// Hamburger toggle
+const hamburger = document.getElementById('hamburgerBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => { mobileMenu.classList.toggle('show'); });
+
+// Show mobile row
+function adjustMobileHeader() {
+  const mobileRow = document.getElementById('mobileHeaderRow');
+  if(window.innerWidth <= 768){
+    mobileRow.style.display='flex';
+  } else {
+    mobileRow.style.display='none';
+  }
+}
+window.addEventListener('resize', adjustMobileHeader);
+adjustMobileHeader();
+
+// Search filter
+function filterCategories(){
+  const val = document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value || '';
+  document.querySelectorAll('.card-wrapper').forEach(wrapper => {
+    wrapper.style.display = wrapper.getAttribute('data-category').toLowerCase().includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// Particle system
+(() => {
+  const canvas = document.getElementById("particleCanvas");
+  const ctx = canvas.getContext("2d");
+  let w,h,particles=[]; const count=100; const dist=120;
+  function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
+  class Particle{constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-0.5)*1.5;this.vy=(Math.random()-0.5)*1.5;this.radius=Math.random()*2+1;} update(){this.x+=this.vx;this.y+=this.vy;if(this.x<=0||this.x>=w)this.vx*=-1;if(this.y<=0||this.y>=h)this.vy*=-1;} draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fillStyle="#00f0ff";ctx.fill();}}
+  function init(){ particles=[]; for(let i=0;i<count;i++) particles.push(new Particle()); }
+  function connect(){for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){const dx=particles[i].x-particles[j].x;const dy=particles[i].y-particles[j].y;const distance=Math.sqrt(dx*dx+dy*dy);if(distance<dist){ctx.beginPath();ctx.strokeStyle="rgba(0,240,255,0.2)";ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke();}}}}
+  function animate(){ctx.clearRect(0,0,w,h);particles.forEach(p=>{p.update();p.draw();});connect();requestAnimationFrame(animate);}
+  window.addEventListener("resize",resize); resize(); init(); animate();
+})();
+</script>
+
+</body>
+</html>
