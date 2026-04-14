@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Your Rental - RentEasy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">RentEasy</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="browse.html" class="nav-btn">Browse Rentals</a>
+                <a href="list-rental.html" class="nav-btn active">List Rentals</a>
+                <a href="about.html" class="nav-btn">About Us</a>
+                <a href="profile.html" class="nav-btn">Profile</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>List Your Item for Rent</h2>
+            <div id="authWarning" class="warning-message" style="display: none;">
+                Please <a href="profile.html">login</a> to list items for rent
+            </div>
+            <form id="rentalForm" class="rental-form">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <div class="form-group">
+                    <label>Price per Day ($) *</label>
+                    <input type="number" id="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Minimum Rental Days *</label>
+                    <input type="number" id="days" required>
+                </div>
+                <div class="form-group">
+                    <label>Condition *</label>
+                    <select id="condition" required>
+                        <option value="">Select condition</option>
+                        <option value="New">New</option>
+                        <option value="Like New">Like New</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Poor">Poor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location *</label>
+                    <input type="text" id="location" placeholder="City, State" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="category">
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Tools">Tools</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" rows="4" placeholder="Describe your item..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Image URL (optional)</label>
+                    <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+                <button type="submit" class="btn-primary">List Rental</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

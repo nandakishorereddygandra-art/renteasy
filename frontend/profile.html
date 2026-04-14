@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - RentEasy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">RentEasy</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="browse.html" class="nav-btn">Browse Rentals</a>
+                <a href="list-rental.html" class="nav-btn">List Rentals</a>
+                <a href="about.html" class="nav-btn">About Us</a>
+                <a href="profile.html" class="nav-btn active">Profile</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div id="authContainer">
+                <div class="auth-toggle">
+                    <button class="toggle-btn active" onclick="showLogin()">Login</button>
+                    <button class="toggle-btn" onclick="showSignup()">Sign Up</button>
+                </div>
+                
+                <div id="loginForm" class="auth-form">
+                    <h3>Login to Your Account</h3>
+                    <input type="email" id="loginEmail" placeholder="Email" class="form-input">
+                    <input type="password" id="loginPassword" placeholder="Password" class="form-input">
+                    <button onclick="login()" class="btn-primary">Login</button>
+                </div>
+
+                <div id="signupForm" class="auth-form" style="display: none;">
+                    <h3>Create New Account</h3>
+                    <input type="text" id="signupName" placeholder="Full Name" class="form-input">
+                    <input type="email" id="signupEmail" placeholder="Email" class="form-input">
+                    <input type="password" id="signupPassword" placeholder="Password" class="form-input">
+                    <select id="signupRole" class="form-input">
+                        <option value="user">Regular User</option>
+                        <option value="manager">Manager</option>
+                    </select>
+                    <button onclick="signup()" class="btn-primary">Sign Up</button>
+                </div>
+            </div>
+
+            <div id="profileInfo" style="display: none;">
+                <div class="profile-header">
+                    <h3>Welcome, <span id="userName"></span>!</h3>
+                    <p>Role: <span id="userRole"></span></p>
+                    <button onclick="logout()" class="btn-secondary">Logout</button>
+                </div>
+                
+                <div id="userRentals">
+                    <h3>Your Listed Rentals</h3>
+                    <div id="userRentalsList" class="rentals-grid"></div>
+                </div>
+
+                <div id="managerDashboard" style="display: none;">
+                    <h3>Manager Dashboard - All Rentals</h3>
+                    <div id="allRentalsList" class="rentals-grid"></div>
+                    <h3>All Users</h3>
+                    <div id="usersList"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
